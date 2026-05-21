@@ -103,6 +103,7 @@ body {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -118,7 +119,8 @@ body {
 
 .content-wrapper {
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
 .weather-main {
@@ -137,6 +139,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 50%;
 }
 
 .today-forecast {
@@ -299,6 +302,7 @@ body {
     height: fit-content;
     max-height: 100%;
     overflow-y: auto;
+    width: 45%;
 }
 
 .history-title {
@@ -446,91 +450,240 @@ body {
     .content-wrapper {
         flex-direction: column;
     }
-    
+
+    .main-content,
+    .history-weather
+    {
+        width: 100%;
+    }
     .weather-sidebar {
         min-width: auto;
     }
-    
+
     .history-weather {
         max-height: 300px;
     }
+}
+
+.about-page {
+    animation: fadeIn 0.3s ease;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
+    border-radius: 2.5rem;
+    box-shadow: 0 30px 40px var(--card-shadow);
+    padding: 2rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.about-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-light);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.back-home-btn {
+    background: linear-gradient(135deg, var(--badge-bg), var(--text-secondary));
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px var(--card-shadow);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    order: 1;
+}
+
+.back-home-btn:hover {
+    background: linear-gradient(135deg, var(--text-secondary), var(--text-tertiary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px var(--card-shadow);
+}
+
+.back-home-btn:active {
+    transform: translateY(1px);
+}
+
+.about-top-nav h1 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin: 0;
+    order: 2;
+    flex: 1;
+    text-align: center;
+}
+
+.about-section {
+    background: var(--item-bg-medium);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(4px);
+    border: 2px solid var(--border-light);
+    box-shadow: 0 2px 8px var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-section:hover {
+    transform: translateY(-2px);
+    background: var(--item-bg-dark);
+    border-color: var(--badge-bg);
+    box-shadow: 0 6px 16px var(--card-shadow);
+}
+
+.about-section h2 {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--dashed-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.about-section h2::before {
+    content: "📋";
+}
+
+.about-section p {
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.about-section p:last-child {
+    margin-bottom: 0;
+}
+
+.about-section strong {
+    color: var(--text-secondary);
 }
 
 @media (max-width: 600px) {
     body {
         padding: 1rem;
     }
-    
+
     .weather-card {
         padding: 1.5rem 1rem;
     }
-    
+
     .city-header {
         flex-direction: column;
     }
-    
+
     .find-me-button {
         align-self: center;
     }
-    
+
     .forecast-item {
         grid-template-columns: 60px 45px 80px 1fr;
         gap: 0.3rem;
         padding: 0.5rem;
         font-size: 0.85rem;
     }
-    
+
     .forecast-day {
         font-size: 0.8rem;
     }
-    
+
     .forecast-temp {
         font-size: 0.8rem;
     }
-    
+
     .forecast-desc {
         font-size: 0.7rem;
     }
-    
+
     .today-item {
         min-width: 60px;
     }
-    
+
     .today-time {
         font-size: 0.7rem;
     }
-    
+
     .today-temp {
         font-size: 0.9rem;
     }
-    
+
     .today-desc {
         font-size: 0.7rem;
     }
-    
+
     .detail-item {
         min-width: 80px;
     }
-    
+
     .detail-label {
         font-size: 0.7rem;
     }
-    
+
     .detail-value {
         font-size: 1rem;
     }
-    
+
     .history-city-card {
         flex-wrap: wrap;
     }
-    
+
     .history-city-name {
         min-width: auto;
     }
-    
+
     .history-today-weather {
         width: 100%;
         justify-content: space-between;
+    }
+
+        .about-page {
+        padding: 10px;
+    }
+    
+    .about-top-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+    }
+    
+    .about-top-nav h1 {
+        font-size: 1.4rem;
+        text-align: left;
+        order: 1;
+    }
+    
+    .back-home-btn {
+        order: 2;
+        justify-content: center;
+    }
+    
+    .about-section {
+        padding: 1rem;
+    }
+    
+    .about-section h2 {
+        font-size: 1.1rem;
+    }
+    
+    .about-section p {
+        font-size: 0.9rem;
     }
 }
 

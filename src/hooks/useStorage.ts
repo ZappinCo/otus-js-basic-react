@@ -1,26 +1,28 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useStorage = () => {
     const storageKey = 'weather_app_react';
-    const [city, setCity] = useState<string>('');
-    const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
-
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const saved = localStorage.getItem(storageKey);
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    setCity(data.city || '');
-                    setSearchHistory(data.searchHistory || []);
-                }
-            } catch (error) {
-                console.error('Failed to load:', error);
+    const getInitialData = () => {
+        try {
+            const saved = localStorage.getItem(storageKey);
+            if (saved) {
+                const data = JSON.parse(saved);
+                return {
+                    city: data.city || '',
+                    searchHistory: data.searchHistory || []
+                };
             }
+        } catch (error) {
+            console.error('Failed to load:', error);
         }
-        loadData();
-    }, []);
+        return { city: '', searchHistory: [] };
+    };
+
+    const initialData = getInitialData();
+
+    const [city, setCity] = useState<string>(initialData.city);
+    const [searchHistory, setSearchHistory] = useState<string[]>(initialData.searchHistory);
 
 
     const saveToStorage = useCallback((newCity: string, newHistory: string[]) => {

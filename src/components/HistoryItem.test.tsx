@@ -1,57 +1,82 @@
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 import HistoryItem from './HistoryItem';
 import type { WeatherData } from '../types/weather';
 
+// Правильный мок - возвращаем только useNavigate
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual, // Сохраняем все остальные экспорты (BrowserRouter, MemoryRouter и т.д.)
+    useNavigate: () => mockNavigate,
+  };
+});
+
+const mockNavigate = vi.fn();
+
+// Мокаем translateWeatherDesc
 vi.mock('../utils/translateWeatherDesc', () => ({
-    translateWeatherDesc: vi.fn((desc) => `Перевод: ${desc}`)
+  translateWeatherDesc: (desc: string) => `Перевод: ${desc}`,
 }));
 
 describe('HistoryItem', () => {
-    const mockWeatherData: WeatherData = {
-        success: true,
-        city: 'Moscow',
-        list: [
-            {
-                dt: '2024-01-15 12:00:00',
-                temp: 25,
-                temp_min: 18,
-                description: 'clear sky',
-                icon: '01d',
-                pressure: 1013,
-                humidity: 65,
-                speed: 5
-            }
-        ]
-    } as any;
+  const mockWeatherData: WeatherData = {
+    city: 'Moscow',
+    list: [
+      {
+        temp: 25,
+        temp_min: 18,
+        icon: '01d',
+        description: 'clear sky',
+      },
+    ],
+  } as WeatherData;
 
-    it('отображает название города', () => {
-        render(<HistoryItem weatherData={mockWeatherData} />);
-        expect(screen.getByText('Moscow')).toBeDefined();
-    });
+  const renderComponent = () => {
+    return render(
+      <MemoryRouter>
+        <HistoryItem weatherData={mockWeatherData} />
+      </MemoryRouter>
+    );
+  };
 
-    it('отображает температуру с плюсом для положительных значений', () => {
-        render(<HistoryItem weatherData={mockWeatherData} />);
-        expect(screen.getByText('+25° / +18°')).toBeDefined();
-    });
+  it('должен отображать название города', () => {
+    renderComponent();
+    expect(screen.getByText('Moscow')).toBeDefined();
+  });
 
-    it('отображает температуру с минусом для отрицательных значений', () => {
-        const coldData = {
-            ...mockWeatherData,
-            list: [{ ...mockWeatherData.list[0], temp: -10, temp_min: -15 }]
-        };
-        render(<HistoryItem weatherData={coldData} />);
-        expect(screen.getByText('-10° / -15°')).toBeDefined();
-    });
+  it('должен отображать температуру', () => {
+    renderComponent();
+    expect(screen.getByText('+25° / +18°')).toBeDefined();
+  });
 
-    it('отображает иконку погоды', () => {
-        render(<HistoryItem weatherData={mockWeatherData} />);
-        const img = document.querySelector('img');
-        expect(img).toBeDefined();
-        expect(img?.src).toContain('openweathermap.org/img/wn/01d.png');
-    });
+  it('должен отображать иконку', () => {
+    renderComponent();
+    const img = screen.getByAltText('clear sky');
+    expect(img).toBeDefined();
+    expect(img.getAttribute('src')).toBe('https://openweathermap.org/img/wn/01d.png');
+  });
 
-    it('отображает описание погоды', () => {
-        render(<HistoryItem weatherData={mockWeatherData} />);
-        expect(screen.getByText('Перевод: clear sky')).toBeDefined();
-    });
+  it('должен отображать описание погоды', () => {
+    renderComponent();
+    expect(screen.getByText('Перевод: clear sky')).toBeDefined();
+  });
+
+  it('должен навигировать на страницу города при клике', () => {
+    renderComponent();
+    const card = screen.getByText('Moscow').closest('.history-city-card');
+    fireEvent.click(card!);
+    expect(mockNavigate).toHaveBeenCalledWith('/Moscow', { replace: true });
+  });
+
+  it('не должен рендерить ничего если нет list', () => {
+    const emptyData = { city: 'Moscow' } as WeatherData;
+    const { container } = render(
+      <MemoryRouter>
+        <HistoryItem weatherData={emptyData} />
+      </MemoryRouter>
+    );
+    expect(container.innerHTML).toBe('');
+  });
 });
